@@ -23,7 +23,7 @@ class Product
     private $id;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      * @Assert\NotNull
      */
     private $code;
@@ -64,7 +64,7 @@ class Product
         return $this->code;
     }
 
-    public function setCode(int $code): self
+    public function setCode(string $code): self
     {
         $this->code = $code;
 
