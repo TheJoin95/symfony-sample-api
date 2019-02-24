@@ -10,11 +10,25 @@ class CategoryFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
-        for($i = 0; $i < 10; $i++)
+        $categories_name = array(
+            'Libri',
+            'Avventura',
+            'Fantascienza',
+            'Storia',
+            'Giallo',
+            'Abbigliamento',
+            'Uomo',
+            'Pantaloni',
+            'Maglie',
+            'Felpe'
+        );
+        foreach($categories_name as $category_name)
         {
             $category = new Category();
-            $category->setName("Category n. $i");
+            $category->setName($category_name);
             $manager->persist($category);
+
+            $this->addReference(strtolower($category_name), $category);
         }
 
         $manager->flush();
