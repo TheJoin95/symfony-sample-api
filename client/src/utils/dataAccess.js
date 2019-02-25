@@ -54,6 +54,11 @@ export function normalize(data) {
   // Flatten nested documents
   return mapValues(data, value =>
     Array.isArray(value)
+      ? value
+      : get(value, '@id', value)
+  );
+  return mapValues(data, value =>
+    Array.isArray(value)
       ? value.map(v => get(v, '@id', v))
       : get(value, '@id', value)
   );

@@ -14,8 +14,7 @@ import {
 import 'bootstrap/dist/css/bootstrap.css';
 import 'font-awesome/css/font-awesome.css';
 import * as serviceWorker from './serviceWorker';
-// Import your reducers and routes here
-import Welcome from './Welcome';
+import './main.css';
 
 // import reducers
 import category from './reducers/category/';
@@ -25,8 +24,6 @@ import product from './reducers/product/';
 import categoryRoutes from './routes/category';
 //import routes
 import productRoutes from './routes/product';
-// import routes
-import productCategories from './routes/productcategories';
 
 const history = createBrowserHistory();
 const store = createStore(
@@ -43,10 +40,18 @@ ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
       <Switch>
-        <Route path="/" component={Welcome} strict={true} exact={true}/>
-        {categoryRoutes}
-        {productRoutes}
-        {productCategories}
+      
+    <div className="welcome">
+        <header className="welcome__top">
+        </header>
+        <section className="welcome__main">
+            <div className="main__content">
+              {productRoutes}
+              {categoryRoutes}
+            </div>
+        </section>
+    </div>
+        
         <Route render={() => <h1>Not Found</h1>} />
       </Switch>
     </ConnectedRouter>

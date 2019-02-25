@@ -51,13 +51,7 @@ class List extends Component {
           <div className="alert alert-danger">{this.props.error}</div>
         )}
 
-        <p>
-          <Link to="create" className="btn btn-primary">
-            Create
-          </Link>
-        </p>
-
-        <table className="table table-responsive table-striped table-hover">
+        <table className="table flip-table table-responsive table-striped table-hover">
           <thead>
             <tr>
               <th>id</th>
@@ -65,35 +59,24 @@ class List extends Component {
               <th>name</th>
               <th>description</th>
               <th>image</th>
-              <th>productCategories</th>
-              <th colSpan={2} />
+              <th>categories</th>
             </tr>
           </thead>
           <tbody>
             {this.props.retrieved &&
               this.props.retrieved['hydra:member'].map(item => (
                 <tr key={item['@id']}>
-                  <th scope="row">
-                    <Link to={`show/${encodeURIComponent(item['@id'])}`}>
+                  <td data-title="id" scope="row">
+                    <Link to={`/products/show/${encodeURIComponent(item['@id'])}`}>
                       {item['@id']}
                     </Link>
-                  </th>
-                  <td>{item['code']}</td>
-                  <td>{item['name']}</td>
-                  <td>{item['description']}</td>
-                  <td>{item['image']}</td>
-                  <td>{this.renderLinks('product_categories', item['productCategories'])}</td>
-                  <td>
-                    <Link to={`show/${encodeURIComponent(item['@id'])}`}>
-                      <span className="fa fa-search" aria-hidden="true" />
-                      <span className="sr-only">Show</span>
-                    </Link>
                   </td>
-                  <td>
-                    <Link to={`edit/${encodeURIComponent(item['@id'])}`}>
-                      <span className="fa fa-pencil" aria-hidden="true" />
-                      <span className="sr-only">Edit</span>
-                    </Link>
+                  <td data-title="code">{item['code']}</td>
+                  <td data-title="name">{item['name']}</td>
+                  <td data-title="description">{item['description']}</td>
+                  <td data-title="image">{item['image']}</td>
+                  <td data-title="categories">
+                  {this.renderLinks('categories', item['categories'])}
                   </td>
                 </tr>
               ))}
@@ -156,7 +139,7 @@ class List extends Component {
     }
 
     return (
-      <Link to={`../${type}/show/${encodeURIComponent(items)}`}>{items}</Link>
+      <Link to={`/${type}/show/${encodeURIComponent(items['@id'])}`}>{items['name']}</Link>
     );
   };
 }

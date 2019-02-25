@@ -4,7 +4,6 @@ import {
   extractHubURL,
   mercureSubscribe as subscribe
 } from '../../utils/dataAccess';
-import { success as deleteSuccess } from './delete';
 
 export function error(error) {
   return { type: 'PRODUCT_LIST_ERROR', error };
@@ -31,7 +30,6 @@ export function list(page = '/products') {
       )
       .then(({ retrieved, hubURL }) => {
         retrieved = normalize(retrieved);
-
         dispatch(loading(false));
         dispatch(success(retrieved));
 
@@ -55,7 +53,6 @@ export function reset(eventSource) {
     if (eventSource) eventSource.close();
 
     dispatch({ type: 'PRODUCT_LIST_RESET' });
-    dispatch(deleteSuccess(null));
   };
 }
 

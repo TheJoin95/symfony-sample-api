@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { retrieve, reset } from '../../actions/category/show';
-import { del } from '../../actions/category/delete';
+import { List } from '../product/List';
 
 class Show extends Component {
   static propTypes = {
@@ -27,10 +27,6 @@ class Show extends Component {
     this.props.reset(this.props.eventSource);
   }
 
-  del = () => {
-    if (window.confirm('Are you sure you want to delete this item?'))
-      this.props.del(this.props.retrieved);
-  };
 
   render() {
     if (this.props.deleted) return <Redirect to=".." />;
@@ -39,7 +35,7 @@ class Show extends Component {
 
     return (
       <div>
-        <h1>Show {item && item['@id']}</h1>
+        <h1>Category: {item && item['name']}</h1>
 
         {this.props.loading && (
           <div className="alert alert-info" role="status">
@@ -52,14 +48,36 @@ class Show extends Component {
             {this.props.error}
           </div>
         )}
-        {this.props.deleteError && (
-          <div className="alert alert-danger" role="alert">
-            <span className="fa fa-exclamation-triangle" aria-hidden="true" />{' '}
-            {this.props.deleteError}
-          </div>
-        )}
 
-        {item && (
+        <table className="table flip-table table-responsive table-striped table-hover">
+          <thead>
+            <tr>
+              <th>id</th>
+              <th>code</th>
+              <th>name</th>
+              <th>description</th>
+              <th>image</th>
+            </tr>
+          </thead>
+          <tbody>
+            {item &&
+              item["products"].map(prod => (
+                <tr key={prod['@id']}>
+                  <td data-title="id" scope="row">
+                    <Link to={`/products/show/${encodeURIComponent(prod['@id'])}`}>
+                      {prod['@id']}
+                    </Link>
+                  </td>
+                  <td data-title="code">{prod['code']}</td>
+                  <td data-title="name">{prod['name']}</td>
+                  <td data-title="description">{prod['description']}</td>
+                  <td data-title="image">{prod['image']}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+
+        {/* {item && (
           <table className="table table-responsive table-striped table-hover">
             <thead>
               <tr>
@@ -73,23 +91,15 @@ class Show extends Component {
                 <td>{item['name']}</td>
               </tr>
               <tr>
-                <th scope="row">productCategories</th>
-                <td>{this.renderLinks('product_categories', item['productCategories'])}</td>
+                <th scope="row">products</th>
+                <td>{this.renderLinks('products', item['products'])}</td>
               </tr>
             </tbody>
           </table>
-        )}
-        <Link to=".." className="btn btn-primary">
-          Back to list
+        )} */}
+        <Link to="..">
+          Back to category list
         </Link>
-        {item && (
-          <Link to={`/categories/edit/${encodeURIComponent(item['@id'])}`}>
-            <button className="btn btn-warning">Edit</button>
-          </Link>
-        )}
-        <button onClick={this.del} className="btn btn-danger">
-          Delete
-        </button>
       </div>
     );
   }
@@ -102,7 +112,7 @@ class Show extends Component {
     }
 
     return (
-      <Link to={`../${type}/show/${encodeURIComponent(items)}`}>{items}</Link>
+      <Link to={`/${type}/show/${encodeURIComponent(items['@id'])}`}>{items['name']}</Link>
     );
   };
 }
@@ -111,15 +121,11 @@ const mapStateToProps = state => ({
   retrieved: state.category.show.retrieved,
   error: state.category.show.error,
   loading: state.category.show.loading,
-  eventSource: state.category.show.eventSource,
-  deleteError: state.category.del.error,
-  deleteLoading: state.category.del.loading,
-  deleted: state.category.del.deleted
+  eventSource: state.category.show.eventSource
 });
 
 const mapDispatchToProps = dispatch => ({
   retrieve: id => dispatch(retrieve(id)),
-  del: item => dispatch(del(item)),
   reset: eventSource => dispatch(reset(eventSource))
 });
 

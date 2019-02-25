@@ -42,53 +42,30 @@ class List extends Component {
         {this.props.loading && (
           <div className="alert alert-info">Loading...</div>
         )}
-        {this.props.deletedItem && (
-          <div className="alert alert-success">
-            {this.props.deletedItem['@id']} deleted.
-          </div>
-        )}
+
         {this.props.error && (
           <div className="alert alert-danger">{this.props.error}</div>
         )}
 
-        <p>
-          <Link to="create" className="btn btn-primary">
-            Create
-          </Link>
-        </p>
-
-        <table className="table table-responsive table-striped table-hover">
+        <table className="table flip-table table-responsive table-striped table-hover">
           <thead>
             <tr>
               <th>id</th>
               <th>name</th>
-              <th>productCategories</th>
-              <th colSpan={2} />
+              <th>N. Products</th>
             </tr>
           </thead>
           <tbody>
             {this.props.retrieved &&
               this.props.retrieved['hydra:member'].map(item => (
                 <tr key={item['@id']}>
-                  <th scope="row">
+                  <td data-title="id" scope="row">
                     <Link to={`show/${encodeURIComponent(item['@id'])}`}>
                       {item['@id']}
                     </Link>
-                  </th>
-                  <td>{item['name']}</td>
-                  <td>{this.renderLinks('product_categories', item['productCategories'])}</td>
-                  <td>
-                    <Link to={`show/${encodeURIComponent(item['@id'])}`}>
-                      <span className="fa fa-search" aria-hidden="true" />
-                      <span className="sr-only">Show</span>
-                    </Link>
                   </td>
-                  <td>
-                    <Link to={`edit/${encodeURIComponent(item['@id'])}`}>
-                      <span className="fa fa-pencil" aria-hidden="true" />
-                      <span className="sr-only">Edit</span>
-                    </Link>
-                  </td>
+                  <td data-title="name">{item['name']}</td>
+                  <td data-title="n. products">{item['products'] && item['products'].length}</td>
                 </tr>
               ))}
           </tbody>
@@ -161,9 +138,8 @@ const mapStateToProps = state => {
     loading,
     error,
     eventSource,
-    deletedItem
   } = state.category.list;
-  return { retrieved, loading, error, eventSource, deletedItem };
+  return { retrieved, loading, error, eventSource };
 };
 
 const mapDispatchToProps = dispatch => ({

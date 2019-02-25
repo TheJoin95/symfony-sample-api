@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { retrieve, reset } from '../../actions/product/show';
-import { del } from '../../actions/product/delete';
 
 class Show extends Component {
   static propTypes = {
@@ -27,11 +26,6 @@ class Show extends Component {
     this.props.reset(this.props.eventSource);
   }
 
-  del = () => {
-    if (window.confirm('Are you sure you want to delete this item?'))
-      this.props.del(this.props.retrieved);
-  };
-
   render() {
     if (this.props.deleted) return <Redirect to=".." />;
 
@@ -39,7 +33,7 @@ class Show extends Component {
 
     return (
       <div>
-        <h1>Show {item && item['@id']}</h1>
+        <h1>Product - {item && item['name']}</h1>
 
         {this.props.loading && (
           <div className="alert alert-info" role="status">
@@ -50,12 +44,6 @@ class Show extends Component {
           <div className="alert alert-danger" role="alert">
             <span className="fa fa-exclamation-triangle" aria-hidden="true" />{' '}
             {this.props.error}
-          </div>
-        )}
-        {this.props.deleteError && (
-          <div className="alert alert-danger" role="alert">
-            <span className="fa fa-exclamation-triangle" aria-hidden="true" />{' '}
-            {this.props.deleteError}
           </div>
         )}
 
@@ -85,23 +73,15 @@ class Show extends Component {
                 <td>{item['image']}</td>
               </tr>
               <tr>
-                <th scope="row">productCategories</th>
-                <td>{this.renderLinks('product_categories', item['productCategories'])}</td>
+                <th scope="row">categories</th>
+                <td>{this.renderLinks('categories', item['categories'])}</td>
               </tr>
             </tbody>
           </table>
         )}
-        <Link to=".." className="btn btn-primary">
+        <Link to="/">
           Back to list
         </Link>
-        {item && (
-          <Link to={`/products/edit/${encodeURIComponent(item['@id'])}`}>
-            <button className="btn btn-warning">Edit</button>
-          </Link>
-        )}
-        <button onClick={this.del} className="btn btn-danger">
-          Delete
-        </button>
       </div>
     );
   }
@@ -114,7 +94,7 @@ class Show extends Component {
     }
 
     return (
-      <Link to={`../${type}/show/${encodeURIComponent(items)}`}>{items}</Link>
+      <Link to={`/${type}/show/${encodeURIComponent(items['@id'])}`}>{items['name']}</Link>
     );
   };
 }
@@ -123,15 +103,11 @@ const mapStateToProps = state => ({
   retrieved: state.product.show.retrieved,
   error: state.product.show.error,
   loading: state.product.show.loading,
-  eventSource: state.product.show.eventSource,
-  deleteError: state.product.del.error,
-  deleteLoading: state.product.del.loading,
-  deleted: state.product.del.deleted
+  eventSource: state.product.show.eventSource
 });
 
 const mapDispatchToProps = dispatch => ({
   retrieve: id => dispatch(retrieve(id)),
-  del: item => dispatch(del(item)),
   reset: eventSource => dispatch(reset(eventSource))
 });
 

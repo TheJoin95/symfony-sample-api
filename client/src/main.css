@@ -309,4 +309,38 @@ a.other__button {
     .main__content {
         padding: 10px;
     }
+    /* flip table */
+    .flip-table td, .flip-table tr, .flip-table thead, .flip-table tbody {
+        display: block;
+    }
+
+    .flip-table th {
+        display: none;
+    }
+
+    .flip-table td {
+        border: none;
+        position: relative;
+        padding-left: 43% !important;
+        white-space: normal;
+        text-align:left;
+    }
+
+    .flip-table td:before {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align:left;
+        font-weight: bold;
+    }
+
+    .flip-table td:before { content: attr(data-title); }
+    .flip-table tr td:last-child {
+        border-bottom: 3px solid #eee;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
 }
