@@ -10,35 +10,39 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(normalizationContext={"groups"={"get"}}, itemOperations={"get"})
+ * @ApiResource(normalizationContext={"groups"={"category"}})
  * @ORM\Entity(repositoryClass="App\Repository\CategoryRepository")
  */
 class Category
 {
     /**
+     * 
+     * @Groups({"category"})
+     * @Groups("product")
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups("get")
+     * @Assert\NotNull
      */
     private $id;
 
     /**
+     * @Groups("product")
+     * @Groups({"category"})
      * @ORM\Column(type="string", length=255)
-     * @Groups("get")
      * @Assert\NotNull
      */
     private $name;
 
     /**
-     * @Groups("get")
-     * @ORM\OneToMany(targetEntity="App\Entity\ProductCategories", mappedBy="category_id")
+     * @Groups({"category"})
+     * @ORM\ManyToMany(targetEntity="App\Entity\Product", mappedBy="categories")
      */
-    private $productCategories;
+    private $products;
 
     public function __construct()
     {
-        $this->productCategories = new ArrayCollection();
+        $this->products = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -59,31 +63,28 @@ class Category
     }
 
     /**
-     * @return Collection|ProductCategories[]
+     * @return Collection|Product[]
      */
-    public function getProductCategories(): Collection
+    public function getProducts(): Collection
     {
-        return $this->productCategories;
+        return $this->products;
     }
 
-    public function addProductCategory(ProductCategories $productCategory): self
+    public function addProduct(Product $product): self
     {
-        if (!$this->productCategories->contains($productCategory)) {
-            $this->productCategories[] = $productCategory;
-            $productCategory->setCategoryId($this);
+        if (!$this->products->contains($product)) {
+            $this->products[] = $product;
+            $product->addCategory($this);
         }
 
         return $this;
     }
 
-    public function removeProductCategory(ProductCategories $productCategory): self
+    public function removeProduct(Product $product): self
     {
-        if ($this->productCategories->contains($productCategory)) {
-            $this->productCategories->removeElement($productCategory);
-            // set the owning side to null (unless already changed)
-            if ($productCategory->getCategoryId() === $this) {
-                $productCategory->setCategoryId(null);
-            }
+        if ($this->products->contains($product)) {
+            $this->products->removeElement($product);
+            $product->removeCategory($this);
         }
 
         return $this;

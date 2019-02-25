@@ -25,6 +25,8 @@ import product from './reducers/product/';
 import categoryRoutes from './routes/category';
 //import routes
 import productRoutes from './routes/product';
+// import routes
+import productCategories from './routes/productcategories';
 
 const history = createBrowserHistory();
 const store = createStore(
@@ -44,6 +46,7 @@ ReactDOM.render(
         <Route path="/" component={Welcome} strict={true} exact={true}/>
         {categoryRoutes}
         {productRoutes}
+        {productCategories}
         <Route render={() => <h1>Not Found</h1>} />
       </Switch>
     </ConnectedRouter>

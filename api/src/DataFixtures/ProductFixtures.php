@@ -10,6 +10,24 @@ class ProductFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
     {
+        $mapCategories = array(
+            array($this->getReference('libri'), $this->getReference('avventura')),
+            array($this->getReference('libri'), $this->getReference('fantascienza')),
+            array($this->getReference('libri'), $this->getReference('storia')),
+            array($this->getReference('libri'), $this->getReference('giallo')),
+            array($this->getReference('libri'), $this->getReference('giallo')),
+            array($this->getReference('libri'), $this->getReference('fantascienza')),
+            array($this->getReference('libri'), $this->getReference('storia')),
+            array($this->getReference('libri'), $this->getReference('storia')),
+            array($this->getReference('libri'), $this->getReference('avventura')),
+            array($this->getReference('libri'), $this->getReference('avventura')),
+            array($this->getReference('abbigliamento'), $this->getReference('uomo'), $this->getReference('pantaloni')),
+            array($this->getReference('abbigliamento'), $this->getReference('uomo'), $this->getReference('maglie')),
+            array($this->getReference('abbigliamento'), $this->getReference('uomo'), $this->getReference('felpe')),
+            array($this->getReference('abbigliamento'), $this->getReference('pantaloni')),
+            array($this->getReference('abbigliamento')),
+        );
+
         $faker = \Faker\Factory::create();
         for($i = 0; $i < 16; $i++)
         {
@@ -18,9 +36,12 @@ class ProductFixtures extends Fixture
             $product->setName($faker->sentence(4));
             $product->setDescription($faker->text);
             $product->setImage($faker->imageUrl(600, 400));
+            if(isset($mapCategories[$i])) {
+                foreach($mapCategories[$i] as $category)
+                    $product->addCategory($category);
+            }
+            
             $manager->persist($product);
-
-            $this->addReference("product_$i", $product);
         }
 
         $manager->flush();

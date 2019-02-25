@@ -10,48 +10,60 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(normalizationContext={"groups"={"product"}})
  * @ORM\Entity(repositoryClass="App\Repository\ProductRepository")
  */
 class Product
 {
     /**
+     * @Groups({"product"})
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Assert\NotNull
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string")
+     * @Groups({"product"})
+     * @Groups("category")
+     * @ORM\Column(type="string", length=255)
      * @Assert\NotNull
      */
     private $code;
 
     /**
+     * @Groups({"product"})
+     * @Groups("category")
      * @ORM\Column(type="string", length=255)
      * @Assert\NotNull
      */
     private $name;
 
     /**
+     * @Groups({"product"})
+     * @Groups("category")
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Assert\NotNull
+     */
+    private $image;
+
+    /**
+     * @Groups({"product"})
+     * @Groups("category")
      * @ORM\Column(type="text", nullable=true)
      */
     private $description;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"product"})
+     * @ORM\ManyToMany(targetEntity="App\Entity\Category", inversedBy="products")
      */
-    private $image;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ProductCategories", mappedBy="product_id", orphanRemoval=true)
-     */
-    private $productCategories;
+    private $categories;
 
     public function __construct()
     {
-        $this->productCategories = new ArrayCollection();
+        $this->categories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -59,7 +71,7 @@ class Product
         return $this->id;
     }
 
-    public function getCode(): ?int
+    public function getCode(): ?string
     {
         return $this->code;
     }
@@ -83,18 +95,6 @@ class Product
         return $this;
     }
 
-    public function getDescription(): ?string
-    {
-        return $this->description;
-    }
-
-    public function setDescription(?string $description): self
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
     public function getImage(): ?string
     {
         return $this->image;
@@ -108,34 +108,40 @@ class Product
     }
 
     /**
-     * @return Collection|ProductCategories[]
+     * @return Collection|Category[]
      */
-    public function getProductCategories(): Collection
+    public function getCategories(): Collection
     {
-        return $this->productCategories;
+        return $this->categories;
     }
 
-    public function addProductCategory(ProductCategories $productCategory): self
+    public function addCategory(Category $category): self
     {
-        if (!$this->productCategories->contains($productCategory)) {
-            $this->productCategories[] = $productCategory;
-            $productCategory->setProductId($this);
+        if (!$this->categories->contains($category)) {
+            $this->categories[] = $category;
         }
 
         return $this;
     }
 
-    public function removeProductCategory(ProductCategories $productCategory): self
+    public function removeCategory(Category $category): self
     {
-        if ($this->productCategories->contains($productCategory)) {
-            $this->productCategories->removeElement($productCategory);
-            // set the owning side to null (unless already changed)
-            if ($productCategory->getProductId() === $this) {
-                $productCategory->setProductId(null);
-            }
+        if ($this->categories->contains($category)) {
+            $this->categories->removeElement($category);
         }
 
         return $this;
     }
 
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): self
+    {
+        $this->description = $description;
+
+        return $this;
+    }
 }
